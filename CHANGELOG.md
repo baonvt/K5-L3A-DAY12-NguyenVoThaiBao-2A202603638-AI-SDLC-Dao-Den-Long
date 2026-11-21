@@ -1,5 +1,9 @@
 # Changelog
 
+## Phase 4 · v1.3 · Release v1.0.0
+
+Benchmark WebGL, soak nhiều đêm, lưu và xuất top 10, đổi phím, cảnh báo có hướng, cỡ chữ và giảm chuyển động. Gói ZIP chơi ngoại tuyến kèm máy chủ cục bộ.
+
 ## Phase 3 · v1.2
 
 - Đèn sáng sử dụng dầu, có thể tắt, châm và thắp lại. Đèn yếu mất vùng an toàn; Bóng Mực có trạng thái drain.

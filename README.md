@@ -1,14 +1,16 @@
 # Đảo Đèn Lồng
 
-**[Xem video chơi thử và kiểm chứng Phase 1](docs/demo/demo.mp4)** · [Xem ảnh trong game](docs/proof/first-light.jpg)
+**[Xem video demo](docs/demo/demo.mp4)** · **[Tải bản chơi v1.0.0](https://github.com/baonvt/K5-L3A-DAY12-NguyenVoThaiBao-2A202603638-AI-SDLC-Dao-Den-Long/releases/tag/v1.0.0)**
 
 Nguyễn Võ Thái Bảo · 2A202603638 · L3A
 
-Trong Đêm 1, hãy dẫn Mây đi theo những lối đá của Đảo Bến, nhặt đom đóm và mang về thắp năm Đèn Lồng Lớn. Bóng Mực đuổi theo Mây trong sương. Vùng sáng quanh một chiếc đèn đã thắp là nơi trú an toàn.
+Mây giữ đèn trên ba hòn đảo. Nhặt đom đóm để thắp đèn, châm dầu trước khi Bóng Mực kéo tới và giữ đủ ánh sáng tới bình minh. Mỗi đêm có bản đồ, địa hình và thời gian riêng.
 
-## Chơi trên máy
+![Mây trên Đảo Bến, ảnh từ bản phát hành](docs/proof/phase-4/play.jpg)
 
-Cần Node.js 20 trở lên, npm và trình duyệt hỗ trợ WebGL 2. Từ terminal trên macOS, Linux hoặc Windows, chạy ba dòng sau. Nếu trình duyệt chưa tự mở, truy cập địa chỉ mà máy chủ in ra, mặc định là [127.0.0.1:4173](http://127.0.0.1:4173).
+## Cài và chơi
+
+Cần Node.js 20 trở lên, npm và trình duyệt có WebGL 2. Trên macOS, Linux hoặc Windows với PowerShell 7, chạy ba dòng sau. Máy chủ in địa chỉ và mở trình duyệt nếu terminal hỗ trợ. Địa chỉ mặc định là [127.0.0.1:4173](http://127.0.0.1:4173).
 
 ```sh
 git clone https://github.com/baonvt/K5-L3A-DAY12-NguyenVoThaiBao-2A202603638-AI-SDLC-Dao-Den-Long.git dao-den-long
@@ -16,32 +18,64 @@ cd dao-den-long
 npm ci && npm start
 ```
 
-| Thao tác | Điều khiển |
+Bản ZIP đính kèm Release đã chứa engine. Giải nén, chạy `node tools/serve.js` trong thư mục vừa giải nén để chơi ngoại tuyến.
+
+## Điều khiển và luật chơi
+
+| Thao tác | Phím mặc định |
 |---|---|
-| Di chuyển, nhặt đom đóm khi đi ngang | WASD hoặc phím mũi tên |
-| Nhảy | Space |
-| Xoay camera | Giữ và kéo trên cảnh, hoặc Z / X |
-| Nạp đom đóm vào đèn gần nhất | E |
-| Tỏa sáng để đẩy và làm choáng Bóng Mực | F |
-| Hướng dẫn, tạm dừng | Nút **?** hoặc Esc |
-| Chơi lại | Nút **Chơi lại** sau khi thắng hoặc thua |
+| Di chuyển | WASD hoặc phím mũi tên |
+| Xoay camera | Kéo trên cảnh hoặc Z / X |
+| Nhảy, lướt | Space, Shift trái |
+| Nạp đèn hoặc châm dầu | E |
+| Tỏa sáng | F |
+| Tạm dừng và tiếp tục | Esc hoặc P |
 
-Màn hình cảm ứng có các nút di chuyển và hành động. Nút ♪ bật tiếng chuông tổng hợp.
+Mở **?** từ menu hoặc **Cài đặt** lúc tạm dừng để đổi phím, chỉnh âm lượng, độ nhạy, bảng màu, chữ lớn và giảm chuyển động. Trên thiết bị cảm ứng có các nút ngay trên màn hình.
 
-## Giữ đảo sáng tới bình minh · Contract v1.2
+| Đêm | Địa hình | Thời gian | Đèn cần sáng khi bình minh |
+|---|---|---:|---:|
+| Đảo Bến | Đảo tròn, năm lối đá | 240 giây | 3/5 |
+| Cầu Tre | Hai đảo, cầu hẹp và bục nhảy | 270 giây | 4/6 |
+| Tháp Chuông | Ba tầng, hai dốc, gió mạnh | 300 giây | 5/7 |
 
-Đêm 1/2/3 kéo dài 240/270/300 giây. Nhặt đom đóm để thắp đèn (10), thắp lại (5) hoặc châm dầu (10 dầu/đom đóm). Mỗi đèn sáng hao 1 dầu/s. Dưới 30 dầu, đèn mất vùng an toàn và có thể bị Bóng Mực hút thêm 5 dầu/s mỗi con. Giữ ít nhất 3/5, 4/6 hoặc 5/7 đèn sáng và còn Ngọn Lửa ở bình minh để thắng. Mở Cài đặt để bật bảng màu dễ phân biệt. Shift để lướt, Esc/P để tạm dừng. Túi tăng 2 ô mỗi lần thắp tới 20 ô.
+Thắp đèn lần đầu cần 10 đom đóm, thắp lại cần 5. Đèn vừa thắp có 100 dầu và tự hao 1 dầu/giây. Mỗi đom đóm châm thêm 10 dầu. Dưới 30 dầu, Bóng Mực có thể hút thêm 5 dầu/giây mỗi con. Sức chứa tăng từ 10 đến 20 theo số lần thắp. Mây thua ngay khi mất hết ba Ngọn Lửa.
 
-Mỗi đom đóm nạp được 5 điểm, thắp lần đầu +100, thắp lại +40. Tỏa Sáng +5 mỗi bóng, +15 nếu đang hút. Mỗi đèn còn sáng khi thắng thưởng 50 + phần nguyên của dầu, mỗi Ngọn Lửa +50. Tổng điểm chỉ cộng từ các đêm đã thắng.
+Mỗi đom đóm nạp cộng 5 điểm. Thắp lần đầu cộng 100, thắp lại cộng 40. Tỏa sáng cộng 5 điểm mỗi bóng, hoặc 15 nếu bóng đang hút dầu. Khi thắng, mỗi đèn sáng thưởng 50 cộng phần nguyên lượng dầu và mỗi Ngọn Lửa thưởng 50. Bảng xếp hạng chỉ cộng điểm các đêm thắng.
+
+## Bảng xếp hạng
+
+Cuối lượt thua hoặc khi thắng Đêm 3, nhập tên 3–12 ký tự gồm chữ Latin, số hoặc dấu gạch dưới. Mở **Bảng xếp hạng** từ menu để xem top 10. Khi chơi bằng lệnh chính thức, dữ liệu ở `~/.dao-den-long/scores.json`. Biến `DAO_DATA_DIR` cho phép dùng thư mục riêng. Xuất lại dữ liệu kể cả sau khi đóng game:
+
+```sh
+node tools/serve.js --export-leaderboard out.json
+```
+
+Nếu tự đưa thư mục web lên dịch vụ tĩnh, bảng điểm của phiên bản tĩnh lưu trong trình duyệt. Lệnh xuất phía trên đọc bảng điểm của bản chạy bằng máy chủ Node cục bộ.
+
+## Test, headless, benchmark và soak
 
 ```sh
 npm test
 npm run proof
-node tools/headless.js --seed 17 --night 1 --ticks 21600 --inputs docs/proof/phase-3/inputs.json --scenario docs/proof/phase-3/scenario.json --out trace.jsonl
+node tools/headless.js --seed 17 --night 1 --ticks 21600 --scenario docs/proof/phase-3/scenario.json --inputs docs/proof/phase-3/inputs.json --snapshot-every 1 --out trace.jsonl
+node tools/bench.js --seed 42 --duration 30 --out bench.json
+node tools/soak.js --seed 7 --nights 10 --out soak.json
 ```
 
-[ADR Phase 3](docs/phase-3.md) · [Changelog](CHANGELOG.md) · [Tiêu chí Phase 2](docs/phase-2.md) · [Các số liệu game](game.contract.json) · [Bằng chứng v1.1](docs/proof/phase-2) · [Ghi chép Phase 1](docs/phase-1.md)
+Headless xử lý một đêm tại 60 tick/giây mô phỏng và ghi JSONL. Benchmark cần màn hình đồ họa thật và Chrome/Chromium/Edge. Nếu chưa có, chạy `npx playwright-core install chromium`, hoặc đặt `CHROME_PATH` tới trình duyệt tương thích. Trên Linux cần phiên desktop và các thư viện hệ thống của Chromium. Cửa sổ đồ họa dùng vùng vẽ 1280×720, khởi động 3 giây, đo thời gian giữa các khung hình bằng requestAnimationFrame. WebGL qua trình duyệt không có API tắt vsync hay lấy RSS toàn bộ tiến trình GPU, nên báo `vsync_off: false`, `peak_mem_mb: null`. Soak dùng RSS của chính tiến trình Node.
+
+[Contract v1.3](game.contract.json) · [Số đo benchmark](bench.json) · [Số đo soak](soak.json) · [Cấu hình máy và ghi chú đo](docs/phase-4.md)
+
+## Bằng chứng theo phase
+
+| Tag | Luật tại tag | Bằng chứng |
+|---|---|---|
+| `phase-1` | Đảo Bến và Contract v1.0 | [Tiêu chí và kết quả](docs/phase-1.md), [JSONL đầu tiên](docs/proof/seed17/actual.jsonl) |
+| `phase-2` | Ba đêm và số liệu chuẩn | [Tiêu chí](docs/phase-2.md), [JSONL và ảnh](docs/proof/phase-2) |
+| `phase-3` | Dầu và thắng lúc bình minh | [Quyết định thiết kế](docs/phase-3.md), [scenario, input và kết quả](docs/proof/phase-3) |
+| `phase-4` | Xếp hạng, tiếp cận và phát hành | [Ảnh và kiểm tra giao diện](docs/proof/phase-4), [retro](docs/retro.md) |
 
 ## Sáng tạo của tôi
 
-Đường đá chỉ hướng và chuông khi nhặt đom đóm nằm ở lớp hiển thị. Kịch bản headless xác định kiểm tra riêng bộ luật. [Nguồn](CREDITS.md) · [Giấy phép](LICENSE)
+Đường đá nối tâm đảo với đèn, chiếc đèn nhỏ treo trên nón lá và tiếng chuông cao dần khi túi đầy giúp người chơi định hướng. Mô phỏng headless dùng chung luật với bản chơi. [Ảnh toàn cảnh](docs/proof/phase-4/menu.jpg) · [Nhật ký thay đổi](CHANGELOG.md) · [Nguồn và công cụ](CREDITS.md) · [Giấy phép](LICENSE)

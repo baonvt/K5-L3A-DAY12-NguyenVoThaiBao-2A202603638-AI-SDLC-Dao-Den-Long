@@ -5,6 +5,7 @@
 | Đề bài, tên Đảo Đèn Lồng, Mây, Bóng Mực và Đảo Bến | Ban tổ chức Lab Day 12, theo PRD-0 trên lab board. |
 | Mô hình nón lá, nhân vật, đèn giấy, cây, vách đá, cầu gỗ, đám mây, hiệu ứng và giao diện | Dựng riêng cho bài bằng hình học, shader và Canvas trong `src/art.js` và `src/view.js`. |
 | Âm thanh | Dao động sine tổng hợp tại thời điểm chơi bằng Web Audio, trong `src/play.js`. |
+| Đo, kiểm giao diện và ghi hình | Playwright (Microsoft, Apache-2.0), Chromium/Chrome; video đóng gói bằng FFmpeg. Các công cụ này phục vụ phát triển và đo đạc. |
 | Engine 3D | Three.js r170, Three.js Authors, giấy phép MIT kèm gói npm. |
 | Công cụ AI | OpenAI Codex hỗ trợ viết và rà soát mã, tạo kịch bản kiểm tra, vận hành trình duyệt và biên soạn ghi chép. |
 | Ảnh và video | Ghi lại bản chạy của chính repo. |
