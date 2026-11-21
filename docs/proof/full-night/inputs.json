@@ -1,0 +1,18 @@
+{
+  "frames": [
+    {"tick":0,"move":[0,-1],"interact":false},
+    {"tick":150,"interact":true,"move":[0,0]},
+    {"tick":151,"interact":false,"move":[0,1]},
+    {"tick":301,"move":[0.951056516,-0.309016994],"interact":false},
+    {"tick":451,"interact":true,"move":[0,0]},
+    {"tick":452,"interact":false,"move":[-0.951056516,0.309016994]},
+    {"tick":602,"move":[0.587785252,0.809016994],"interact":false},
+    {"tick":752,"interact":true,"move":[0,0]},
+    {"tick":753,"interact":false,"move":[-0.587785252,-0.809016994]},
+    {"tick":903,"move":[-0.587785252,0.809016994],"interact":false},
+    {"tick":1053,"interact":true,"move":[0,0]},
+    {"tick":1054,"interact":false,"move":[0.587785252,-0.809016994]},
+    {"tick":1204,"move":[-0.951056516,-0.309016994],"interact":false},
+    {"tick":1354,"interact":true,"move":[0,0]}
+  ]
+}

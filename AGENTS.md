@@ -6,3 +6,4 @@
 - Scenario chỉ dựng trạng thái. Giữ RNG, ID, thứ tự sự kiện và input tái lập được.
 - Chạy npm run proof để tạo lại JSONL. Không sửa tay output.
 - Khi đổi giao diện, chơi thử và đối chiếu ảnh với bản chạy. Chỉ gắn tag cho phase đã đọc và kiểm tra.
+- Kiểm tra trực quan chữ “Đèn Lồng” ở màn hình đầu. Chạy cả lượt thắng từ trạng thái mặc định qua tests/full-night.test.js.
