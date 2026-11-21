@@ -8,3 +8,4 @@
 - Khi đổi giao diện, chơi thử và đối chiếu ảnh với bản chạy. Chỉ gắn tag cho phase đã đọc và kiểm tra.
 - Kiểm tra trực quan chữ “Đèn Lồng” ở màn hình đầu. Chạy cả lượt thắng từ trạng thái mặc định qua tests/full-night.test.js.
 - Kiểm tra mỗi đêm bằng scenario tái lập, kể cả pause khi các bộ đếm đang chạy. Giữ riêng tick và sim_tick.
+- Khi đổi dầu, kiểm fuel bằng số nguyên 1/60, ngưỡng 30 và thứ tự chết trước thắng bình minh. Ghi lý do cho test đổi trong CHANGELOG và ADR.

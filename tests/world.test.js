@@ -53,10 +53,10 @@ test('lit lamps shelter player and exclude a chasing shade',()=>{
   advance(w,300); assert.ok(distance(w.shades[0].pos,[0,0,0])>=t.safe_radius);assert.equal(w.player.flames,t.flames);
 });
 test('three end reasons, early stop and win bonus',()=>{
-  const w=game({time_left_s:9,player:{carried:t.lantern_cost},lanterns:Array.from({length:5},(_,i)=>({id:'L'+(i+1),lit:i!==0,pos:[i,0,0]}))});
+  const w=game({time_left_s:1/HZ,player:{carried:t.lantern_cost},lanterns:Array.from({length:5},(_,i)=>({id:'L'+(i+1),lit:i!==0,pos:[i,0,0]}))});
   const last=w.step({interact:true}).at(-1);
-  assert.deepEqual(last,{type:'event',tick:1,name:'game_over',data:{result:'won',reason:'all_lit'}});
-  assert.equal(w.score,t.lantern_cost*t.score.per_mote+t.score.per_lantern+8*t.score.per_second_left+t.flames*t.score.per_flame_left);
+  assert.deepEqual(last,{type:'event',tick:1,name:'game_over',data:{result:'won',reason:'dawn_survived'}});
+  assert.equal(w.score,t.lantern_cost*t.score.per_mote+t.score.per_lantern+150+4*149+t.flames*t.score.per_flame_left);
   w.step(); assert.equal(w.tick,1);
   const dawn=game({time_left_s:1/HZ}); assert.equal(dawn.step().at(-1).data.reason,'dawn');
   const dark=game({player:{flames:1},shades:[{pos:[0,0,0]}]}); assert.equal(dark.step().at(-1).data.reason,'no_flames');

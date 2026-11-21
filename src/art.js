@@ -74,7 +74,11 @@ export function makeLamp() {
   beam(g,[1,3.12,0],[1,2.87,0],.032,'#c09d72');
   const body=paper(g,1,2.37,0,.57,'#b87758');
   const ring=shape(g,'rim','#efbd72',0,.052,0,1.22,1.22,1.22,true);ring.rotation.x=-Math.PI/2;
-  return {g,body,ring};
+  const tear=shape(body.parent,'box','#222436',0,0,.71,.065,.67,.035);tear.rotation.z=.32;
+  const fuel=new T.Group();g.add(fuel);fuel.position.set(1,3.7,0);
+  shape(fuel,'box','#232934',0,0,0,1.6,.18,.035);
+  const fill=shape(fuel,'box','#f2c14e',0,0,.035,1.54,.12,.035,true);
+  return {g,body,ring,tear,fuel,fill};
 }
 export function makeShade() {
   const g=new T.Group();

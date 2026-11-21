@@ -7,3 +7,5 @@ Mỗi đèn giữ số nguyên bằng 60 lần lượng dầu. Bộ mô phỏng 
 Kiểm chứng trước tag: áp dụng 1 và nhiều bóng hút cùng lúc, thử 30 và dưới 30, châm dầu khi có bóng, thắp lại chỉ tốn 5, tăng sức chứa đến trần, làm choáng bóng đang hút, chờ bình minh cho đủ ba đêm, mất lửa ở tick cuối. Lưu một lượt từ CLI, lặp so từng byte.
 
 Test thắng all_lit ở v1.1 được thay bằng bảo đảm tiếp tục chơi và kiểm tra dawn_survived. Test tính điểm nạp, pulse và thưởng cuối đêm dùng công thức v1.2. Bài test pause, TTL, chuyển động, bản đồ và Gió Lạc tiếp tục chạy.
+
+25 test đạt trên máy phát triển. [Kịch bản CLI](proof/phase-3/scenario.json) vừa tắt một đèn vừa thắp lại một đèn, thắng ở tick 3 với 573 điểm. [Output](proof/phase-3/actual.jsonl).

@@ -1,0 +1,35 @@
+{
+  "random_motes": false,
+  "random_shades": false,
+  "random_drifters": false,
+  "player": {
+    "carried": 5
+  },
+  "time_left_s": 0.05,
+  "lanterns": [
+    {
+      "id": "L1",
+      "pos": [
+        0,
+        0,
+        0
+      ],
+      "ever_lit": true
+    },
+    {
+      "id": "L2",
+      "lit": true,
+      "fuel": 31
+    },
+    {
+      "id": "L3",
+      "lit": true,
+      "fuel": 80
+    },
+    {
+      "id": "L4",
+      "lit": true,
+      "fuel": 0.01666
+    }
+  ]
+}

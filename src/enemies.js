@@ -33,10 +33,20 @@ export function moveShades(w){
     if(s.wait>0 && ['spawning','recoil','stunned'].includes(s.state)){expel(w,s);continue;}
     if(['spawning','recoil','stunned'].includes(s.state)){s.state='wander';expel(w,s);continue;}
     const d=distance(s.pos,p.pos);
+    if(s.state==='drain'){
+      const lamp=w.lanterns.find(l=>l.id===s.target);
+      if(d<=6){s.state='chase';s.target=null;}
+      else if(!lamp?.lit||lamp.units>=t.low_fuel_threshold*60||distance(lamp.pos,s.pos)>2){s.state='wander';s.target=null;}
+      else continue;
+      s.drainTicks=0;
+    }
     if(s.state==='wander' && d<=t.shade_chase_radius && !w.sheltered)s.state='chase';
     else if(s.state==='chase' && (d>t.shade_release_radius || w.sheltered))s.state='wander';
-    const target=s.state==='chase'?p:nearest(w.lanterns.filter(l=>!l.lit),s.pos);
+    const weak=s.state==='wander'?nearest(w.lanterns.filter(l=>l.lit&&l.units<t.low_fuel_threshold*60),s.pos):null;
+    const target=s.state==='chase'?p:weak??nearest(w.lanterns.filter(l=>!l.lit),s.pos);
+    if(weak && distance(s.pos,weak.pos)<=2){s.state='drain';s.target=weak.id;s.drainTicks=0;continue;}
     if(target)toward(s,target.pos,w.night===3?4.5:t.shade_speed);
+    if(weak && distance(s.pos,weak.pos)<=2){s.state='drain';s.target=weak.id;s.drainTicks=0;}
     expel(w,s);
     const floor=floorAt(w.night,s.pos[0],s.pos[2]);if(Number.isFinite(floor))s.pos[1]=floor+1;
   }

@@ -86,7 +86,14 @@ export class View {
       const l=w.lanterns[i],v=this.lamps[i];v.g.position.set(...l.pos);
       v.body.material=l.lit?material('#ffb347',true):material('#5b5f6e');
       v.ring.material=l.lit?material('#ffd384',true):material('#b6a07c');
-      v.halo.visible=l.lit;v.halo.scale.setScalar(4.4+Math.sin(time*2+i)*.2);
+      const weak=l.lit && l.units<w.t.low_fuel_threshold*60;
+      v.body.parent.scale.set(.57,.57*(l.lit?1:.8),.57);v.tear.visible=!l.lit;
+      v.fuel.visible=l.lit;v.fuel.quaternion.copy(this.camera.quaternion);
+      const fraction=l.units/(w.t.fuel_max*60);
+      v.fill.scale.x=1.54*fraction;v.fill.position.x=-.77*(1-fraction);
+      const flicker=!weak || Math.cos(time*Math.PI*2)>0;
+      v.fill.visible=flicker;v.body.material=l.lit?material(flicker?'#ffb347':'#9c6947',true):material('#5b5f6e');
+      v.halo.visible=l.lit && flicker;v.halo.scale.setScalar(4.4+Math.sin(time*2+i)*.2);
     }
     const lit=w.lanterns.filter(l=>l.lit).length;
     this.sky.day.value=lit/w.lanterns.length;this.ambient.intensity=.15+.55*this.sky.day.value;
@@ -96,6 +103,9 @@ export class View {
       v.position.set(s.pos[0],s.pos[1]+Math.sin(time*3+i)*.1,s.pos[2]);
       v.rotation.y=Math.atan2(pos[0]-s.pos[0],pos[2]-s.pos[2]);
       v.rotation.z=s.state==='stunned'?.61:0;
+      v.children[1].material=material(s.state==='stunned'?'#3a3450':'#120a1a');
+      const accent=material(this.accessible?'#00b3ff':'#7a3cff',true);
+      for(const part of [v.children[0],...v.children.slice(-2)])part.material=accent;
     }
     this.leaves.visible=w.night===3 && w.windEnabled && (w.wind.active || w.simTick%1800>=1680);
     if(this.leaves.visible)this.leaves.children.forEach((m,i)=>m.position.set(pos[0]+((time*5+i*1.7)%12)-6,pos[1]+1+Math.sin(time+i),pos[2]+(i%7)-4));

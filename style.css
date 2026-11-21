@@ -32,3 +32,4 @@ dialog{padding:0;border:1px solid #a999766b;border-radius:15px;background:#202c3
 #slots{left:50%;bottom:22px;transform:translateX(-50%);display:flex;gap:3px}#slots i{width:10px;height:16px;border:1px solid #f2c14e;border-radius:2px}#slots i.on{background:#ffe58a}
 #cooldowns{right:18px;bottom:22px}#arrow{left:50%;top:14%;color:#f2c14e;pointer-events:none}.keybar{display:none}.inventory{bottom:auto;top:20px}.mission{left:auto;right:20px;top:74px}.metrics{left:50%;right:auto;transform:translateX(-50%)}#points{color:#f2c14e}.urgent{color:#ff5a5f!important;animation:blink 1s infinite}@keyframes blink{50%{opacity:.52}}
 @media(max-width:650px){#cooldowns{bottom:104px}.metrics{top:130px}.mission{min-width:auto}.inventory{top:8px}.metrics span{font-size:12px}}
+.accessible .urgent{color:#fff!important}.accessible .urgent:before{content:'⚠ '}

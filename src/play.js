@@ -4,13 +4,14 @@ import {View} from './view.js';
 import {nearest} from './enemies.js';
 import {Vector3} from '../node_modules/three/build/three.module.js';
 const $=id=>document.getElementById(id);
-const defaults={volume:.28,sensitivity:1};
+const defaults={volume:.28,sensitivity:1,accessible:false};
 const defaultKeys={up:'KeyW',down:'KeyS',left:'KeyA',right:'KeyD',jump:'Space',dash:'ShiftLeft',interact:'KeyE',pulse:'KeyF',pause:'Escape'};
 async function main(){
   const {tuning}=await (await fetch('./game.contract.json')).json();
   const view=new View($('world'));
   let settings={...defaults};
   try{Object.assign(settings,JSON.parse(localStorage.getItem('dao-settings'))??{});}catch{}
+  const apply=()=>{view.accessible=settings.accessible;document.body.classList.toggle('accessible',settings.accessible);};apply();
   const save=()=>localStorage.setItem('dao-settings',JSON.stringify(settings));
   let seed=17,night=1,total=0,yaw=0,w=new World(tuning,seed),mode='title',prev=0,acc=0,drag=null,toastEnd=0,sound=true,audio;
   const keys=new Set(),press=new Set(),release=new Set();
@@ -39,7 +40,8 @@ async function main(){
   }
   function options(back){
     panel('Cài đặt','<label>Âm lượng <input id="volume" type="range" min="0" max="1" step=".01"></label>'+
-      '<label>Độ nhạy chuột <input id="sensitivity" type="range" min=".2" max="3" step=".1"></label>',{'Quay lại':back});
+      '<label>Độ nhạy chuột <input id="sensitivity" type="range" min=".2" max="3" step=".1"></label><label><input type="checkbox" id="accessible"> Bảng màu dễ phân biệt</label>',{'Quay lại':back});
+    $('accessible').checked=settings.accessible;$('accessible').onchange=()=>{settings.accessible=$('accessible').checked;apply();save();};
     for(const k of ['volume','sensitivity']){const el=$(k);el.value=settings[k];el.oninput=()=>{settings[k]=Number(el.value);save();};}
   }
   function start(){
@@ -63,7 +65,7 @@ async function main(){
     setMode('end');const won=w.state==='won';if(won)total+=w.score;
     tone(won?784:147,.7);
     const final=won&&night===3;
-    const msg=won?'Điểm đêm '+w.score:reason==='no_flames'?'Mây đã mất ngọn lửa cuối cùng.':'Đảo chưa đủ sáng khi bình minh đến.';
+    const msg=won?'Điểm đêm '+w.score:reason==='no_flames'?'Mây đã mất ngọn lửa cuối cùng.':'Số đèn sáng ở bình minh chưa đạt mục tiêu.';
     const actions=won?(final?{'Về menu':menu}:{'Đêm kế tiếp':()=>{night++;introduction();},'Về menu':menu}):{'Chơi lại Đêm':introduction,'Về menu':menu};
     panel(final?'Bình Minh':won?'Đêm đã sáng':'Đêm đã khép lại','<p>'+msg+'</p><p>Tổng điểm các đêm đã thắng · '+total+'</p>',actions);
   }
@@ -77,8 +79,9 @@ async function main(){
     $('health').textContent='◆'.repeat(p.flames)+'◇'.repeat(Math.max(0,tuning.flames-p.flames));$('health').setAttribute('aria-label',p.flames+' ngọn lửa');
     $('slots').innerHTML=Array.from({length:w.capacity},(_,i)=>i<p.carried?'<i class="on"></i>':'<i></i>').join('');
     $('cooldowns').textContent='Lướt '+(p.dashCd?Math.ceil(p.dashCd/60)+'s':'✓')+' · Tỏa sáng '+(p.pulseCd?Math.ceil(p.pulseCd/60)+'s':'✓');
+    const closeLamp=nearest(w.lanterns.filter(l=>!l.lit||l.units<tuning.fuel_max*60),p.pos);
     const lamp=nearest(w.lanterns.filter(l=>!l.lit),p.pos);
-    $('context').textContent=lamp && distance(lamp.pos,p.pos)<=tuning.interact_radius?'E — Nạp ánh sáng ('+lamp.deposited+'/'+tuning.lantern_cost+')':'';
+    $('context').textContent=closeLamp && distance(closeLamp.pos,p.pos)<=tuning.interact_radius?(closeLamp.lit?'E — Châm dầu · '+Math.floor(closeLamp.units/60)+'/100':'E — Nạp ánh sáng ('+closeLamp.deposited+'/'+(closeLamp.ever_lit?tuning.relight_cost:tuning.lantern_cost)+')'):'';
     const projected=lamp?new Vector3(...lamp.pos).project(view.camera):null;
     const behind=projected && projected.z>1;
     $('arrow').hidden=!projected||(!behind && Math.abs(projected.x)<1 && Math.abs(projected.y)<1);
@@ -117,6 +120,7 @@ async function main(){
       if(sounds[ev.name])tone(sounds[ev.name]);
       if(ev.name==='pulse')view.pulse(w,time);
       if(ev.name==='lantern_lit')announce(ev.data.lantern_id+' đã sáng');
+      if(ev.name==='lantern_out')announce('⚠ '+ev.data.lantern_id+' đã cạn dầu');
       if(ev.name==='wind_warning')announce('❧ Gió sắp thổi');
       if(ev.name==='shade_spawned')announce('Bóng Mực xuất hiện');
       if(ev.name==='player_hit')announce('Mất một ngọn lửa');

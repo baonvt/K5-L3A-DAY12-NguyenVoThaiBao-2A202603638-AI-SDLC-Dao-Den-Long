@@ -28,17 +28,19 @@ npm ci && npm start
 
 Màn hình cảm ứng có các nút di chuyển và hành động. Nút ♪ bật tiếng chuông tổng hợp.
 
-## Ba đêm · Contract v1.1
+## Giữ đảo sáng tới bình minh · Contract v1.2
 
-Đếm giờ 300 / 330 / 360 giây. Mỗi đèn cần 10 đom đóm. Mây mang tối đa 10, có 3 Ngọn Lửa. Nhấn Shift để lướt, P hoặc Esc để tạm dừng. Nhặt Bùa Gió để chạy nhanh và lướt liên tiếp. Đêm 2 có cầu, bục nhảy và Gió Lạc. Đêm 3 có các tầng, tháp và gió mạnh. Thắng khi tất cả đèn sáng trước hoặc đúng bình minh. Mỗi đom đóm nạp +10, thắp đèn +100, mỗi Bóng Mực trúng xung +5. Khi thắng cộng 2 điểm mỗi giây nguyên còn lại và 50 mỗi Ngọn Lửa.
+Đêm 1/2/3 kéo dài 240/270/300 giây. Nhặt đom đóm để thắp đèn (10), thắp lại (5) hoặc châm dầu (10 dầu/đom đóm). Mỗi đèn sáng hao 1 dầu/s. Dưới 30 dầu, đèn mất vùng an toàn và có thể bị Bóng Mực hút thêm 5 dầu/s mỗi con. Giữ ít nhất 3/5, 4/6 hoặc 5/7 đèn sáng và còn Ngọn Lửa ở bình minh để thắng. Mở Cài đặt để bật bảng màu dễ phân biệt. Shift để lướt, Esc/P để tạm dừng. Túi tăng 2 ô mỗi lần thắp tới 20 ô.
+
+Mỗi đom đóm nạp được 5 điểm, thắp lần đầu +100, thắp lại +40. Tỏa Sáng +5 mỗi bóng, +15 nếu đang hút. Mỗi đèn còn sáng khi thắng thưởng 50 + phần nguyên của dầu, mỗi Ngọn Lửa +50. Tổng điểm chỉ cộng từ các đêm đã thắng.
 
 ```sh
 npm test
 npm run proof
-node tools/headless.js --seed 17 --night 2 --ticks 21600 --inputs docs/proof/phase-2/inputs.json --scenario docs/proof/phase-2/scenario.json --out trace.jsonl
+node tools/headless.js --seed 17 --night 1 --ticks 21600 --inputs docs/proof/phase-3/inputs.json --scenario docs/proof/phase-3/scenario.json --out trace.jsonl
 ```
 
-[Tiêu chí Phase 2](docs/phase-2.md) · [Các số liệu game](game.contract.json) · [Bằng chứng v1.1](docs/proof/phase-2) · [Ghi chép Phase 1](docs/phase-1.md)
+[ADR Phase 3](docs/phase-3.md) · [Changelog](CHANGELOG.md) · [Tiêu chí Phase 2](docs/phase-2.md) · [Các số liệu game](game.contract.json) · [Bằng chứng v1.1](docs/proof/phase-2) · [Ghi chép Phase 1](docs/phase-1.md)
 
 ## Sáng tạo của tôi
 

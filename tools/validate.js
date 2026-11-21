@@ -24,7 +24,7 @@ export function validateScenario(data,t,night=1) {
   const pos = v => vec(v,3);
   fields(data,{player:object,random_motes:flag,random_shades:flag,random_drifters:flag,wind_enabled:flag,drifters:Array.isArray,charms:Array.isArray,motes:Array.isArray,shades:Array.isArray,
     lanterns:Array.isArray,time_left_s:v=>Number.isFinite(v)&&v>=0},'scenario');
-  if (data.player) fields(data.player,{pos,carried:v=>uint(v)&&v<=t.carry_capacity,flames:uint,invuln_ticks:uint,dash_cd_ticks:uint,pulse_cd_ticks:uint,charm_ticks:uint},'player');
+  if (data.player) fields(data.player,{pos,carried:v=>uint(v)&&v<=Math.min(t.capacity_max,t.carry_capacity+2*(data.player.successful_lights??0)),successful_lights:uint,flames:uint,invuln_ticks:uint,dash_cd_ticks:uint,pulse_cd_ticks:uint,charm_ticks:uint},'player');
   for (const [i,m] of (data.motes??[]).entries()) {
     if(Array.isArray(m))check(pos(m),'motes['+i+']');
     else {fields(m,{id:v=>typeof v==='string',pos,kind:v=>['random','dropped'].includes(v),ttl_s:v=>v===null||Number.isFinite(v)&&v>=0},'mote');check(pos(m.pos),'mote.pos');}
@@ -33,14 +33,14 @@ export function validateScenario(data,t,night=1) {
   for(const c of data.charms??[])fields(c,{id:v=>typeof v==='string',pos,available:flag,respawn_ticks:uint,respawn_s:v=>Number.isFinite(v)&&v>=0},'charm');
   const seen = new Set();
   for (const [i,s] of (data.shades??[]).entries()) {
-    fields(s,{pos,state:v=>['spawning','wander','chase','recoil','stunned'].includes(v),state_ticks_left:uint,id:v=>typeof v==='string'&&v.length>0},'shades['+i+']');
+    fields(s,{pos,state:v=>['spawning','wander','chase','recoil','stunned','drain'].includes(v),state_ticks_left:uint,target_lantern_id:v=>typeof v==='string',id:v=>typeof v==='string'&&v.length>0},'shades['+i+']');
     check(pos(s.pos),'shades['+i+'].pos');
     if (s.id) { check(!seen.has(s.id),'shades.id'); seen.add(s.id); }
   }
   seen.clear();
   const ids = Array.from({length:4+night},(_,i)=>'L'+(i+1));
   for (const [i,l] of (data.lanterns??[]).entries()) {
-    fields(l,{pos,id:v=>ids.includes(v),lit:flag,deposited:v=>uint(v)&&v<=t.lantern_cost},'lanterns['+i+']');
+    fields(l,{pos,id:v=>ids.includes(v),lit:flag,ever_lit:flag,relit_count:uint,fuel:v=>Number.isFinite(v)&&v>=0&&v<=t.fuel_max,deposited:v=>uint(v)&&v<=t.lantern_cost},'lanterns['+i+']');
     check(ids.includes(l.id)&&!seen.has(l.id),'lanterns.id'); seen.add(l.id);
   }
   return data;
