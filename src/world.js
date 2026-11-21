@@ -40,7 +40,7 @@ export class World {
     });
     this.randomMotes=scenario.random_motes??true;this.randomShades=scenario.random_shades??true;
     this.randomDrifters=scenario.random_drifters??true;this.windEnabled=scenario.wind_enabled??true;
-    this.motes=[];this.shades=[];this.drifters=[];this.sequence={M:0,S:0,D:0};this.ids=new Set();
+    this.motes=[];this.shades=[];this.contactOrder=[];this.safe=[];this.weak=[];this.unlit=[];this.drifters=[];this.sequence={M:0,S:0,D:0};this.ids=new Set();
     for(const item of [...(scenario.shades??[]),...(scenario.drifters??[]),...(scenario.motes??[])])if(item.id)this.ids.add(item.id);
     if(scenario.motes)for(const m of scenario.motes)this.addMote(m.pos??m,m.kind,m.ttl_s,m.id);
     else if(this.randomMotes)for(let i=0;i<tuning.initial_motes;i++)this.spawnMote();
@@ -66,7 +66,8 @@ export class World {
   addShade(pos,id,s={}) {
     const shade={id:id??this.id('S'),pos:[...pos],state:s.state??'wander',wait:s.state_ticks_left??0,
       target:s.target_lantern_id??null,drainTicks:0,push:0,pushDir:[1,0],recoilDir:[1,0]};
-    this.shades.push(shade);return shade.id;
+    this.shades.push(shade);
+    this.contactOrder.push(shade);this.contactOrder.sort((a,b)=>a.id.localeCompare(b.id,'en',{numeric:true}));return shade.id;
   }
   addDrifter(pos,d={}){
     const state=d.state??'idle',dir=direction(this.player.pos,pos);
@@ -87,10 +88,12 @@ export class World {
   }
   pick(){
     const p=this.player,within=m=>distance(p.pos,m.pos)<=this.t.pickup_radius && Math.abs(p.pos[1]-m.pos[1])<=1.5;
-    this.motes=this.motes.filter(m=>{
-      if(p.carried>=this.capacity || !within(m))return true;
-      p.carried++;this.emit('mote_picked',{carried:p.carried});return false;
-    });
+    let kept=0;
+    for(const m of this.motes){
+      if(p.carried>=this.capacity || !within(m)){this.motes[kept++]=m;continue;}
+      p.carried++;this.emit('mote_picked',{carried:p.carried});
+    }
+    this.motes.length=kept;
     for(const c of this.charms)if(c.available && within(c)){
       c.available=false;c.wait=2700;p.charm=600;p.dashCd=0;this.emit('charm_picked',{charm_id:c.id,charm_ticks:600});
     }
@@ -117,7 +120,11 @@ export class World {
       this.emit('lantern_lit',{lantern_id:l.id,relight});
     }
   }
-  updateSafe(){this.safe=this.lanterns.filter(l=>l.lit&&l.units>=this.t.low_fuel_threshold*HZ);this.sheltered=this.safe.some(l=>distance(l.pos,this.player.pos)<=this.t.safe_radius);}
+  updateSafe(){
+    this.safe.length=this.weak.length=this.unlit.length=0;this.sheltered=false;
+    for(const l of this.lanterns){if(!l.lit)this.unlit.push(l);else if(l.units<this.t.low_fuel_threshold*HZ)this.weak.push(l);
+      else{this.safe.push(l);if(distance(l.pos,this.player.pos)<=this.t.safe_radius)this.sheltered=true;}}
+  }
   pulse(){
     const {player:p,t}=this;
     if(p.carried<t.pulse_cost||p.pulseCd)return;
@@ -152,7 +159,7 @@ export class World {
     for(const key of ['invuln','dashCd','pulseCd','charm'])if(p[key])p[key]--;
     for(const s of this.shades)if(s.wait)s.wait--;
     for(const c of this.charms)if(!c.available && --c.wait<=0){c.wait=0;c.available=true;}
-    this.motes=this.motes.filter(m=>m.life===null || --m.life>0);
+    for(let i=this.motes.length-1;i>=0;i--){const m=this.motes[i];if(m.life!==null&&--m.life<=0)this.motes.splice(i,1);}
     this.timeLeft=Math.max(0,this.initialTime-this.simTick/HZ);
     if(this.night===3 && this.windEnabled){
       const phase=this.simTick%1800;

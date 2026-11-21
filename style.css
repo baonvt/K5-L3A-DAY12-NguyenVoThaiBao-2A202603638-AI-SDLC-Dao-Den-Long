@@ -33,3 +33,13 @@ dialog{padding:0;border:1px solid #a999766b;border-radius:15px;background:#202c3
 #cooldowns{right:18px;bottom:22px}#arrow{left:50%;top:14%;color:#f2c14e;pointer-events:none}.keybar{display:none}.inventory{bottom:auto;top:20px}.mission{left:auto;right:20px;top:74px}.metrics{left:50%;right:auto;transform:translateX(-50%)}#points{color:#f2c14e}.urgent{color:#ff5a5f!important;animation:blink 1s infinite}@keyframes blink{50%{opacity:.52}}
 @media(max-width:650px){#cooldowns{bottom:104px}.metrics{top:130px}.mission{min-width:auto}.inventory{top:8px}.metrics span{font-size:12px}}
 .accessible .urgent{color:#fff!important}.accessible .urgent:before{content:'⚠ '}
+:root{--ui:18px;--cream:#f5f1e6;--gold:#f2c14e}body.large{--ui:22.5px}
+button,input,select,.intro p,.chapter,.title-foot,.small,.lamp-row span,.metrics span,.metrics b,.inventory strong,.inventory small,#toast,#context,.sheet dt,.sheet p,.sheet button,#touch button,kbd,#cooldowns,.ranking th,.ranking td{font-size:var(--ui)}
+.sheet{font-size:var(--ui)}.intro{width:min(510px,45vw)}.intro .primary,.secondary{padding:12px 20px}.secondary{border:1px solid var(--stroke);border-radius:7px;background:#24313e;margin:12px 4px;color:var(--cream)}
+#shadeArrow,#captions{position:absolute;pointer-events:none;background:var(--glass);color:var(--cream);padding:7px 12px;border-radius:6px;font-size:var(--ui)}
+#shadeArrow{transform:translate(-50%,-50%)}#captions{bottom:76px;left:50%;transform:translateX(-50%);text-align:center}#captions:empty{display:none}
+#keymap{display:grid;grid-template-columns:1fr 1fr;gap:5px}fieldset{border:1px solid var(--stroke);border-radius:6px}dialog{width:min(580px,94vw);overflow:auto}
+.ranking{width:100%;border-collapse:collapse}.ranking th,.ranking td{padding:5px;text-align:left;border-bottom:1px solid var(--stroke)}
+.reduced *{animation:none!important;transition:none!important}.large .mission strong{font-size:26.25px}.large .sheet h2{font-size:45px}.large h1{font-size:clamp(78px,9.25vw,145px)}
+@media(max-width:700px){.intro{width:87%}#slots{max-width:55vw}#cooldowns{font-size:var(--ui)}#context{bottom:155px}}
+#health,.mission>span{font-size:var(--ui)}#keymap button,#resetKeys,.sheet form button{border:1px solid #8f978a;border-radius:6px;background:#293a46;color:var(--cream);padding:6px 10px}.sheet form button:disabled{opacity:.6}

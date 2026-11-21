@@ -144,7 +144,7 @@ function batchStatic(parent) {
   }return output;
 }
 
-export function environment(scene,night=1) {
+export function environment(scene,night=1,decorations=true) {
   const rng=seeded(3613), base=new T.Group();
   const forest=[['#244d51','#346263','#467775'],['#345b5b','#48746c','#63867a'],['#32434f','#3d565c','#4f6d6c']];
   for(const [cx,r] of islands[night]){
@@ -170,7 +170,7 @@ export function environment(scene,night=1) {
     shape(base,'rim','#f2c14e',x,y+.19,z,.78,.78,.78,true).rotation.x=Math.PI/2;
   }
   // The paths and stones sit slightly above the level collision plane.
-  for(let j=0;j<lamps[night].length;j++) {
+  for(let j=0;decorations && j<lamps[night].length;j++) {
     const lp=lamps[night][j],cx=night===2&&lp[0]>40?70:0;const a=Math.atan2(lp[0]-cx,-lp[2]);
     for(let i=0;i<13;i++) {
       const r=2+i*(Math.hypot(lp[0]-cx,lp[2])-2)/13,offset=Math.sin(i*.52+j)*.62;
@@ -205,9 +205,9 @@ export function environment(scene,night=1) {
     shape(g,'box','#c29469',0,4.2,0,4.75,.13,.48);
     for(const side of [-1,1]) {beam(g,[side*1.15,3.92,0],[side*1.15,3.55,0],.025,'#734c48');paper(g,side*1.15,3.17,0,.47,'#ffb465',true);}
   }
-  pier(15,18,.78);
-  for(let i=0;i<3;i++) shape(base,'post','#665152',-19+i*4,2.35,-10,.12,4.7,.12);
-  for(let i=0;i<8;i++) {
+  if(decorations)pier(15,18,.78);
+  for(let i=0;decorations && i<3;i++) shape(base,'post','#665152',-19+i*4,2.35,-10,.12,4.7,.12);
+  for(let i=0;decorations && i<8;i++) {
     const x=-19+i, y=4.6-.45*Math.sin(i%4*Math.PI/4);
     beam(base,[x,y,-10],[x+1,4.6-.45*Math.sin((i+1)%4*Math.PI/4),-10],.025,'#6a5150');
     if(i%2) paper(base,x,y-.33,-10,.25,'#ffbd72',true);

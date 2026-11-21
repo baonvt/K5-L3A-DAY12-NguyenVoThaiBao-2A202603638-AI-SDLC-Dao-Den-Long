@@ -11,7 +11,7 @@
   <div class="scrim"></div>
   <header>
     <div class="wordmark"><i class="mark" aria-hidden="true"></i><span>Đảo Đèn Lồng</span></div>
-    <div class="tools"><button id="sound" aria-pressed="false" aria-label="Bật âm thanh" title="Bật âm thanh">♪</button>
+    <div class="tools"><button id="sound" aria-pressed="true" aria-label="Âm thanh" title="Âm thanh">♪</button>
       <button id="help" aria-label="Hướng dẫn điều khiển" title="Hướng dẫn điều khiển">?</button></div>
   </header>
   <section id="intro" class="intro" aria-labelledby="title">
@@ -19,14 +19,15 @@
     <h1 id="title">Đảo<br><em>Đèn Lồng</em></h1>
     <p>Đêm xuống trên biển mây. Hãy cùng Mây gom đom đóm, châm dầu và giữ đảo sáng tới bình minh.</p>
     <button class="primary" id="start">Vào đảo <span aria-hidden="true">→</span></button>
+    <button class="secondary" id="rank">Bảng xếp hạng</button>
   </section>
   <div id="titleFoot" class="title-foot"><span class="star">✧</span> Hành trình của Mây</div>
   <section id="hud" hidden aria-label="Thông tin trò chơi">
     <div class="mission"><div class="small" id="nightName"></div><strong>Giữ đèn tới bình minh</strong>
-      <div class="lamp-row"><div id="lamps" aria-hidden="true"></div><span id="litCount"></span></div></div>
-    <div class="metrics"><span>Trước bình minh <b id="clock">04:00</b></span><span>Điểm <b id="points">0</b></span></div>
+      <div class="lamp-row"><div id="lamps" aria-hidden="true"></div><span id="litCount"></span></div><span>Điểm <b id="points">0</b></span></div>
+    <div class="metrics"><span>Trước bình minh <b id="clock">04:00</b></span></div>
     <div class="inventory"><span class="small">NGỌN LỬA</span><div id="health"></div><span class="small">ĐOM ĐÓM</span><strong><span id="bag">0</span> <small id="limit">/ 10</small></strong></div>
-    <div id="toast" role="status"></div><div id="context"></div>
+    <div id="captions" aria-live="polite"></div><div id="shadeArrow" hidden></div><div id="toast" role="status"></div><div id="context"></div>
     <div id="slots"></div><div id="cooldowns"></div><div id="arrow" hidden></div><div class="keybar"><span><kbd>WASD</kbd> Di chuyển</span><span><kbd>Space</kbd> Nhảy</span><span><kbd>E</kbd> Nạp đèn</span><span><kbd>F</kbd> Tỏa sáng</span><span><kbd>Z / X</kbd> Xoay</span></div>
   </section>
   <div id="touch" hidden aria-label="Điều khiển cảm ứng">

@@ -1,5 +1,6 @@
 import * as T from '../node_modules/three/build/three.module.js';
 import {environment,sky,makePlayer,makeLamp,makeShade,material,shape} from './art.js';
+import {ShadeBatch} from './shade-batch.js';
 import {seeded} from './world.js';
 
 function glowTexture() {
@@ -43,7 +44,7 @@ export class View {
     this.haloMap=glowTexture();this.haloMat=new T.SpriteMaterial({map:this.haloMap,color:'#ffe9b0',transparent:true,
       depthWrite:false,blending:T.AdditiveBlending});
     this.lamps.forEach(l=>{l.halo=new T.Sprite(this.haloMat);l.halo.position.set(1,2.37,0);l.g.add(l.halo);});
-    this.shades=[];this.flyGeom=new T.BufferGeometry();this.flyPos=new Float32Array(3*64);
+    this.shadeBatch=new ShadeBatch(this.scene);this.flyGeom=new T.BufferGeometry();this.flyPos=new Float32Array(3*64);
     this.flyGeom.setAttribute('position',new T.BufferAttribute(this.flyPos,3).setUsage(T.DynamicDrawUsage));
     const flies=new T.Points(this.flyGeom,new T.PointsMaterial({color:'#fff6c2',map:this.haloMap,size:.65,
       transparent:true,depthWrite:false,blending:T.AdditiveBlending}));flies.frustumCulled=false;this.scene.add(flies);
@@ -62,7 +63,7 @@ export class View {
       this.camera.aspect=bw/bh;this.camera.updateProjectionMatrix();this.forceCamera=true;
     }
     const dt=Math.min(.12,Math.max(.001,time-this.lastTime));this.lastTime=time;
-    if(!this.terrain.has(w.night))this.terrain.set(w.night,environment(this.scene,w.night));
+    if(!this.terrain.has(w.night))this.terrain.set(w.night,environment(this.scene,w.night,!w.wanderOnly));
     for(const [night,model] of this.terrain)model.visible=night===w.night;
     this.lamps.forEach((l,i)=>l.g.visible=i<w.lanterns.length);
     for(const model of this.props.values())model.visible=false;
@@ -80,7 +81,7 @@ export class View {
     const stride=moving ? Math.sin(w.tick*.26):0;
     this.person.body.position.y=.09+Math.abs(stride)*.05;
     this.person.legs[0].rotation.x=stride*.48;this.person.legs[1].rotation.x=-stride*.48;
-    this.person.g.visible=!(mode==='play' && w.player.invuln>0 && Math.floor(w.tick/6)%2);
+    this.person.g.visible=this.reduced || !(mode==='play' && w.player.invuln>0 && Math.floor(w.tick/6)%2);
     this.shadow.position.set(pos[0],pos[1]+.115,pos[2]);
     for(let i=0;i<w.lanterns.length;i++){
       const l=w.lanterns[i],v=this.lamps[i];v.g.position.set(...l.pos);
@@ -91,22 +92,13 @@ export class View {
       v.fuel.visible=l.lit;v.fuel.quaternion.copy(this.camera.quaternion);
       const fraction=l.units/(w.t.fuel_max*60);
       v.fill.scale.x=1.54*fraction;v.fill.position.x=-.77*(1-fraction);
-      const flicker=!weak || Math.cos(time*Math.PI*2)>0;
+      const flicker=this.reduced || !weak || Math.cos(time*Math.PI*2)>0;
       v.fill.visible=flicker;v.body.material=l.lit?material(flicker?'#ffb347':'#9c6947',true):material('#5b5f6e');
       v.halo.visible=l.lit && flicker;v.halo.scale.setScalar(4.4+Math.sin(time*2+i)*.2);
     }
     const lit=w.lanterns.filter(l=>l.lit).length;
     this.sky.day.value=lit/w.lanterns.length;this.ambient.intensity=.15+.55*this.sky.day.value;
-    for(let i=0;i<Math.max(this.shades.length,w.shades.length);i++){
-      if(!this.shades[i]){const s=makeShade();this.shades.push(s);this.scene.add(s);}
-      const v=this.shades[i],s=w.shades[i];v.visible=!!s;if(!s)continue;
-      v.position.set(s.pos[0],s.pos[1]+Math.sin(time*3+i)*.1,s.pos[2]);
-      v.rotation.y=Math.atan2(pos[0]-s.pos[0],pos[2]-s.pos[2]);
-      v.rotation.z=s.state==='stunned'?.61:0;
-      v.children[1].material=material(s.state==='stunned'?'#3a3450':'#120a1a');
-      const accent=material(this.accessible?'#00b3ff':'#7a3cff',true);
-      for(const part of [v.children[0],...v.children.slice(-2)])part.material=accent;
-    }
+    this.shadeBatch.render(w,time,this.accessible);
     this.leaves.visible=w.night===3 && w.windEnabled && (w.wind.active || w.simTick%1800>=1680);
     if(this.leaves.visible)this.leaves.children.forEach((m,i)=>m.position.set(pos[0]+((time*5+i*1.7)%12)-6,pos[1]+1+Math.sin(time+i),pos[2]+(i%7)-4));
     const count=w.motes.length;
@@ -138,6 +130,8 @@ export class View {
     }else{
       const blend=1-Math.exp(-dt*13);this.camera.position.lerp(this.dest,blend);this.look.lerp(this.eye,blend);
     }
-    this.wasIntro=intro;this.camera.lookAt(this.look);this.renderer.render(this.scene,this.camera);
+    this.wasIntro=intro;
+    if(mode==='bench'){const a=time*2*Math.PI/15;this.camera.position.set(30*Math.cos(a),15,-30*Math.sin(a));this.look.set(0,0,0);}
+    this.camera.lookAt(this.look);this.renderer.render(this.scene,this.camera);
   }
 }

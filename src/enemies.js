@@ -32,6 +32,7 @@ export function moveShades(w){
     if(s.state==='recoil' && s.wait>0){s.pos[0]+=s.recoilDir[0]*2/60;s.pos[2]+=s.recoilDir[1]*2/60;}
     if(s.wait>0 && ['spawning','recoil','stunned'].includes(s.state)){expel(w,s);continue;}
     if(['spawning','recoil','stunned'].includes(s.state)){s.state='wander';expel(w,s);continue;}
+    const previousFloor=floorAt(w.night,s.pos[0],s.pos[2]);
     const d=distance(s.pos,p.pos);
     if(s.state==='drain'){
       const lamp=w.lanterns.find(l=>l.id===s.target);
@@ -40,15 +41,15 @@ export function moveShades(w){
       else continue;
       s.drainTicks=0;
     }
-    if(s.state==='wander' && d<=t.shade_chase_radius && !w.sheltered)s.state='chase';
+    if(!w.wanderOnly && s.state==='wander' && d<=t.shade_chase_radius && !w.sheltered)s.state='chase';
     else if(s.state==='chase' && (d>t.shade_release_radius || w.sheltered))s.state='wander';
-    const weak=s.state==='wander'?nearest(w.lanterns.filter(l=>l.lit&&l.units<t.low_fuel_threshold*60),s.pos):null;
-    const target=s.state==='chase'?p:weak??nearest(w.lanterns.filter(l=>!l.lit),s.pos);
+    const weak=s.state==='wander'?nearest(w.weak,s.pos):null;
+    const target=s.state==='chase'?p:weak??nearest(w.unlit,s.pos);
     if(weak && distance(s.pos,weak.pos)<=2){s.state='drain';s.target=weak.id;s.drainTicks=0;continue;}
     if(target)toward(s,target.pos,w.night===3?4.5:t.shade_speed);
     if(weak && distance(s.pos,weak.pos)<=2){s.state='drain';s.target=weak.id;s.drainTicks=0;}
     expel(w,s);
-    const floor=floorAt(w.night,s.pos[0],s.pos[2]);if(Number.isFinite(floor))s.pos[1]=floor+1;
+    const floor=floorAt(w.night,s.pos[0],s.pos[2]);if(Number.isFinite(floor)&&Number.isFinite(previousFloor))s.pos[1]+=floor-previousFloor;
   }
 }
 export function moveDrifters(w){
@@ -64,7 +65,7 @@ export function moveDrifters(w){
       d.pos[0]+=Math.cos(a)*2/60;d.pos[2]+=Math.sin(a)*2/60;
     }
   }
-  w.drifters=w.drifters.filter(d=>d.state!=='flee'||d.wait>0);
+  for(let i=w.drifters.length-1;i>=0;i--)if(w.drifters[i].state==='flee' && w.drifters[i].wait<=0)w.drifters.splice(i,1);
 }
 export function flee(d,p,ticks){d.state='flee';d.wait=ticks;d.dir=direction(p.pos,d.pos);}
 export function contacts(w){
@@ -75,7 +76,7 @@ export function contacts(w){
     flee(d,p,240);w.emit('drifter_steal',{drifter_id:d.id,amount,carried:p.carried});
   }
   if(w.sheltered || p.invuln>0)return;
-  for(const s of [...w.shades].sort((a,b)=>a.id.localeCompare(b.id,'en',{numeric:true}))){
+  for(const s of w.contactOrder){
     if(!['wander','chase'].includes(s.state)||(distance(s.pos,p.pos)>w.t.shade_hit_radius || Math.abs(s.pos[1]-p.pos[1])>1.5))continue;
     w.hit('shade');s.recoilDir=direction(p.pos,s.pos);s.state='recoil';s.wait=Math.round(w.t.recoil_s*60);break;
   }

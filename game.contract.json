@@ -1,8 +1,8 @@
 {
-  "contract_version": "1.2",
+  "contract_version": "1.3",
   "team": "2A202603638-NguyenVoThaiBao",
   "build_cmd": "npm ci",
-  "run_cmd": "npm start",
+  "run_cmd": "node tools/serve.js",
   "headless_cmd": "node tools/headless.js",
   "tuning": {
     "player_speed": 6,
@@ -59,5 +59,7 @@
     "drain_per_s": 5,
     "low_fuel_threshold": 30,
     "capacity_max": 20
-  }
+  },
+  "bench_cmd": "node tools/bench.js",
+  "soak_cmd": "node tools/soak.js"
 }

@@ -1,6 +1,6 @@
 {
   "name": "dao-den-long",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "engines": {
@@ -10,7 +10,9 @@
     "start": "node tools/serve.js",
     "test": "node --test",
     "headless": "node tools/headless.js",
-    "proof": "node tools/proof.js"
+    "proof": "node tools/proof.js",
+    "bench": "node tools/bench.js",
+    "soak": "node tools/soak.js"
   },
   "dependencies": {
     "playwright-core": "1.65.1",
