@@ -32,24 +32,26 @@ export class View {
     this.renderer=new T.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance'});
     this.renderer.setPixelRatio(Math.min(devicePixelRatio,1.65));
     this.camera=new T.PerspectiveCamera(48,1,.12,540);
-    this.scene=new T.Scene();this.scene.fog=new T.FogExp2('#89809a',.0082);
+    this.scene=new T.Scene();this.scene.fog=new T.FogExp2('#1b2350',.0082);
     this.sky=sky(this.scene);
     this.ambient=new T.HemisphereLight('#e3dcf6','#82717f',1.62);this.scene.add(this.ambient);
     const sun=new T.DirectionalLight('#ffd5a4',2.0);sun.position.set(-24,38,6);this.scene.add(sun);
-    environment(this.scene);seaOfClouds(this.scene);
+    this.terrain=new Map();seaOfClouds(this.scene);this.props=new Map();
     this.person=makePlayer();this.scene.add(this.person.g);
     this.shadow=shape(this.scene,'post','#435d5d',0,.11,0,.49,.015,.32);
-    this.lamps=Array.from({length:5},()=>{const l=makeLamp();this.scene.add(l.g);return l;});
-    this.haloMap=glowTexture();this.haloMat=new T.SpriteMaterial({map:this.haloMap,color:'#ffbb52',transparent:true,
+    this.lamps=Array.from({length:7},()=>{const l=makeLamp();this.scene.add(l.g);return l;});
+    this.haloMap=glowTexture();this.haloMat=new T.SpriteMaterial({map:this.haloMap,color:'#ffe9b0',transparent:true,
       depthWrite:false,blending:T.AdditiveBlending});
     this.lamps.forEach(l=>{l.halo=new T.Sprite(this.haloMat);l.halo.position.set(1,2.37,0);l.g.add(l.halo);});
     this.shades=[];this.flyGeom=new T.BufferGeometry();this.flyPos=new Float32Array(3*64);
     this.flyGeom.setAttribute('position',new T.BufferAttribute(this.flyPos,3).setUsage(T.DynamicDrawUsage));
-    const flies=new T.Points(this.flyGeom,new T.PointsMaterial({color:'#ffe59d',map:this.haloMap,size:.65,
+    const flies=new T.Points(this.flyGeom,new T.PointsMaterial({color:'#fff6c2',map:this.haloMap,size:.65,
       transparent:true,depthWrite:false,blending:T.AdditiveBlending}));flies.frustumCulled=false;this.scene.add(flies);
     this.pulseRing=shape(this.scene,'rim','#ffe2a0',0,.35,0,1,1,1,true);
     this.pulseRing.rotation.x=Math.PI/2;this.pulseAt=-10;
     this.lastTime=0;this.look=new T.Vector3();this.dest=new T.Vector3();this.eye=new T.Vector3();
+    this.leaves=new T.Group();this.scene.add(this.leaves);
+    for(let i=0;i<16;i++)shape(this.leaves,'orb','#f2c14e',0,0,0,.16,.035,.09);
     this.forceCamera=true;
   }
   pulse(w,time) { this.pulseAt=time;this.pulseRing.position.set(w.player.pos[0],.38,w.player.pos[2]); }
@@ -60,29 +62,43 @@ export class View {
       this.camera.aspect=bw/bh;this.camera.updateProjectionMatrix();this.forceCamera=true;
     }
     const dt=Math.min(.12,Math.max(.001,time-this.lastTime));this.lastTime=time;
+    if(!this.terrain.has(w.night))this.terrain.set(w.night,environment(this.scene,w.night));
+    for(const [night,model] of this.terrain)model.visible=night===w.night;
+    this.lamps.forEach((l,i)=>l.g.visible=i<w.lanterns.length);
+    for(const model of this.props.values())model.visible=false;
+    for(const prop of [...w.drifters,...w.charms.filter(c=>c.available)]){
+      const charm=prop.id.startsWith('C');let model=this.props.get(prop.id);
+      if(!model){model=new T.Group();this.scene.add(model);this.props.set(prop.id,model);
+        if(charm){shape(model,'box','#f2c14e',0,0,0,.7,1,.13);shape(model,'box','#c8102e',0,0,.09,.58,.88,.12);}
+        else{for(let i=0;i<5;i++)shape(model,'orb','#8fa3b8',0,Math.sin(i)*.16,i*.28,.39-i*.05,.13,.34);}
+      }
+      model.visible=true;model.position.set(prop.pos[0],prop.pos[1]+1.05+.12*Math.sin(time*2),prop.pos[2]);model.rotation.y=time;
+    }
     const {pos}=w.player;this.person.g.position.set(...pos);
     this.person.g.rotation.y=w.facing;
     const moving=mode==='play' && Math.hypot(...w.input.move)>0;
     const stride=moving ? Math.sin(w.tick*.26):0;
     this.person.body.position.y=.09+Math.abs(stride)*.05;
     this.person.legs[0].rotation.x=stride*.48;this.person.legs[1].rotation.x=-stride*.48;
-    this.person.g.visible=!(mode==='play' && w.tick<w.hitReady && Math.floor(w.tick/6)%2);
-    this.shadow.position.set(pos[0],.115,pos[2]);
+    this.person.g.visible=!(mode==='play' && w.player.invuln>0 && Math.floor(w.tick/6)%2);
+    this.shadow.position.set(pos[0],pos[1]+.115,pos[2]);
     for(let i=0;i<w.lanterns.length;i++){
       const l=w.lanterns[i],v=this.lamps[i];v.g.position.set(...l.pos);
-      v.body.material=l.lit?material('#ffd077',true):material('#ae7257');
+      v.body.material=l.lit?material('#ffb347',true):material('#5b5f6e');
       v.ring.material=l.lit?material('#ffd384',true):material('#b6a07c');
       v.halo.visible=l.lit;v.halo.scale.setScalar(4.4+Math.sin(time*2+i)*.2);
     }
     const lit=w.lanterns.filter(l=>l.lit).length;
-    this.sky.day.value=lit/5;this.ambient.intensity=1.62+.11*lit;
+    this.sky.day.value=lit/w.lanterns.length;this.ambient.intensity=.15+.55*this.sky.day.value;
     for(let i=0;i<Math.max(this.shades.length,w.shades.length);i++){
       if(!this.shades[i]){const s=makeShade();this.shades.push(s);this.scene.add(s);}
       const v=this.shades[i],s=w.shades[i];v.visible=!!s;if(!s)continue;
-      v.position.set(s.pos[0],s.pos[1]+.83+Math.sin(time*3+i)*.1,s.pos[2]);
+      v.position.set(s.pos[0],s.pos[1]+Math.sin(time*3+i)*.1,s.pos[2]);
       v.rotation.y=Math.atan2(pos[0]-s.pos[0],pos[2]-s.pos[2]);
       v.rotation.z=s.state==='stunned'?.61:0;
     }
+    this.leaves.visible=w.night===3 && w.windEnabled && (w.wind.active || w.simTick%1800>=1680);
+    if(this.leaves.visible)this.leaves.children.forEach((m,i)=>m.position.set(pos[0]+((time*5+i*1.7)%12)-6,pos[1]+1+Math.sin(time+i),pos[2]+(i%7)-4));
     const count=w.motes.length;
     if(count*3>this.flyPos.length) {
       this.flyPos=new Float32Array(count*6);
@@ -98,7 +114,7 @@ export class View {
     if(this.pulseRing.visible)this.pulseRing.scale.setScalar(.15+w.t.pulse_radius*age/.47);
     const intro=mode==='title';
     if(intro) {
-      const a=.61+.045*Math.sin(time*.09),d=bw/bh<1.05?69:64;
+      const a=.61+.045*Math.sin(time*.09),d=bw/bh<1.05?102:91;
       this.dest.set(Math.sin(a)*d,20,Math.cos(a)*d);this.eye.set(0,-1.8,0);
       const horizontal=bw/bh<1.05?0:-bw*.145;
       this.camera.setViewOffset(bw,bh,horizontal,bw/bh<1.05?bh*.12:0,bw,bh);

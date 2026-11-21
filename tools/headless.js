@@ -18,18 +18,19 @@ function run() {
   const options = Object.fromEntries(names.map(n=>[n,{type:'string'}]));
   const {values:a} = parseArgs({options});
   const seed = integer(a.seed,'seed',Number.MIN_SAFE_INTEGER);
-  if (a.night!=='1' || !a.out) throw new Error('Cần --night 1 và --out <file.jsonl>');
+  if (!['1','2','3'].includes(a.night) || !a.out) throw new Error('Cần --night 1|2|3 và --out <file.jsonl>');
   const limit = integer(a.ticks,'ticks',0);
   const cadence = integer(a['snapshot-every']??'10','snapshot-every',1);
   const frames = a.inputs===undefined ? [] : validateInputs(load(a.inputs));
-  const scenario = a.scenario===undefined ? {} : validateScenario(load(a.scenario),contract.tuning);
-  const world = new World(contract.tuning,seed,scenario);
+  const scenario = a.scenario===undefined ? {} : validateScenario(load(a.scenario),contract.tuning,Number(a.night));
+  const world = new World(contract.tuning,seed,scenario,Number(a.night));
   const fd = openSync(a.out,'w');
   const line = value => writeSync(fd,JSON.stringify(value)+'\n');
   try {
     line(world.snapshot());
+    line({type:'event',tick:0,name:'night_start',data:{night:world.night}});
     let cursor = 0;
-    while (world.tick<limit && world.state==='playing') {
+    while (world.tick<limit && !['won','lost'].includes(world.state)) {
       const frame = frames[cursor]?.tick===world.tick ? frames[cursor++] : undefined;
       for (const event of world.step(frame)) line(event);
       if (world.tick%cadence===0) line(world.snapshot());

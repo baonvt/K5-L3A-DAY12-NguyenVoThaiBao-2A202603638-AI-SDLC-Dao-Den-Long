@@ -13,7 +13,7 @@ test('CLI outputs exact ticks/cadence, deterministic bytes and different seeds',
   const play=(...extra)=>{const r=run('--ticks','21','--out',out,...extra);assert.equal(r.status,0,r.stderr);return readFileSync(out,'utf8');};
   const a=play(); assert.equal(play(),a); assert.notEqual(play('--seed','18'),a);
   const rows=a.trim().split('\n').map(JSON.parse);assert.deepEqual(rows.filter(r=>r.type==='snapshot').map(r=>r.tick),[0,10,20]);assert.equal(rows.at(-1).ticks,21);
-  assert.equal(play('--ticks','0').trim().split('\n').length,2);
+  assert.equal(play('--ticks','0').trim().split('\n').length,3);
 });
 test('malformed JSON, shapes and frame order exit 2 with stderr',t=>{
   const dir=directory(t),file=join(dir,'case.json'),out=join(dir,'out.jsonl');
@@ -32,7 +32,7 @@ test('real JSON inputs apply after tick 0, emit step index and stop at dawn',t=>
   assert.equal(run('--ticks','100','--out',out,'--scenario',s,'--inputs',f,'--snapshot-every','1').status,0);
   const rows=readFileSync(out,'utf8').trim().split('\n').map(JSON.parse);
   assert.equal(rows[0].player.carried,0);assert.equal(rows[0].player.pos[2],0);
-  assert.equal(rows[1].name,'mote_picked');assert.equal(rows[1].tick,1);
+  assert.equal(rows[2].name,'mote_picked');assert.equal(rows[2].tick,1);
   assert.equal(rows.at(-2).player.pos[2],.2);
-  assert.deepEqual(rows.at(-1),{type:'end',ticks:2,state:'lost',score:10});
+  assert.deepEqual(rows.at(-1),{type:'end',ticks:2,state:'lost',score:0});
 });

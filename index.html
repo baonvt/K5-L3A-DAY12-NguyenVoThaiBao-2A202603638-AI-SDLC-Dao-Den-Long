@@ -22,19 +22,19 @@
   </section>
   <div id="titleFoot" class="title-foot"><span class="star">✧</span> Hành trình của Mây</div>
   <section id="hud" hidden aria-label="Thông tin trò chơi">
-    <div class="mission"><div class="small">ĐÊM 01 <b>·</b> ĐẢO BẾN</div><strong>Thắp sáng hòn đảo</strong>
+    <div class="mission"><div class="small" id="nightName"></div><strong>Thắp sáng hòn đảo</strong>
       <div class="lamp-row"><div id="lamps" aria-hidden="true"></div><span id="litCount"></span></div></div>
     <div class="metrics"><span>Trước bình minh <b id="clock">04:00</b></span><span>Điểm <b id="points">0</b></span></div>
-    <div class="inventory"><span class="small">NGỌN LỬA</span><div id="health"></div><span class="small">ĐOM ĐÓM</span><strong><span id="bag">0</span> <small>/ 10</small></strong></div>
+    <div class="inventory"><span class="small">NGỌN LỬA</span><div id="health"></div><span class="small">ĐOM ĐÓM</span><strong><span id="bag">0</span> <small id="limit">/ 10</small></strong></div>
     <div id="toast" role="status"></div><div id="context"></div>
-    <div class="keybar"><span><kbd>WASD</kbd> Di chuyển</span><span><kbd>Space</kbd> Nhảy</span><span><kbd>E</kbd> Nạp đèn</span><span><kbd>F</kbd> Tỏa sáng</span><span><kbd>Z / X</kbd> Xoay</span></div>
+    <div id="slots"></div><div id="cooldowns"></div><div id="arrow" hidden></div><div class="keybar"><span><kbd>WASD</kbd> Di chuyển</span><span><kbd>Space</kbd> Nhảy</span><span><kbd>E</kbd> Nạp đèn</span><span><kbd>F</kbd> Tỏa sáng</span><span><kbd>Z / X</kbd> Xoay</span></div>
   </section>
   <div id="touch" hidden aria-label="Điều khiển cảm ứng">
     <div class="pad"><button data-key="KeyW" aria-label="Tiến">↑</button><button data-key="KeyA" aria-label="Sang trái">←</button><button data-key="KeyS" aria-label="Lùi">↓</button><button data-key="KeyD" aria-label="Sang phải">→</button></div>
-    <div class="action-pad"><button data-key="Space">Nhảy</button><button data-key="KeyE">Nạp</button><button data-key="KeyF">Tỏa sáng</button></div>
+    <div class="action-pad"><button data-key="ShiftLeft">Lướt</button><button data-key="Space">Nhảy</button><button data-key="KeyE">Nạp</button><button data-key="KeyF">Tỏa sáng</button></div>
   </div>
   <dialog id="dialog" aria-labelledby="dialogTitle"><div class="sheet"><div class="chapter"><span></span> ĐẢO BẾN</div>
-    <h2 id="dialogTitle"></h2><div id="dialogBody"></div><button class="primary" id="dialogAction"></button></div></dialog>
+    <h2 id="dialogTitle"></h2><div id="dialogBody"></div><div id="choices"></div><button class="primary" id="dialogAction"></button></div></dialog>
   <div id="loadError" role="alert" hidden></div>
 </main>
 <script type="module" src="./src/play.js"></script>

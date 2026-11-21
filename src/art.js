@@ -1,5 +1,6 @@
 import * as T from '../node_modules/three/build/three.module.js';
-import {seeded,ISLAND_RADIUS} from './world.js';
+import {islands,lamps,pads} from './maps.js';
+import {seeded} from './world.js';
 
 const geometries = new Map(), materials = new Map();
 function geometry(key,make) {
@@ -43,10 +44,10 @@ function paper(parent,x,y,z,size,color,glow=false) {
 }
 export function makePlayer() {
   const g=new T.Group();
-  const skin='#ecc59e',cloth='#df7854',boots='#493849';
+  const skin='#ecc59e',cloth='#e8e2d0',boots='#493849';
   const body=new T.Group();g.add(body);
   shape(body,'cone',cloth,0,.71,0,.43,.8,.32);
-  shape(body,'round','#35475b',0,1.0,0,.28,.18,.25);
+  shape(body,'round','#c8102e',0,1.0,0,.28,.18,.25);
   shape(body,'round',skin,0,1.35,.015,.28,.32,.26);
   shape(body,'round','#443347',0,1.48,-.04,.29,.21,.25);
   for(const x of [-.092,.092]) shape(body,'orb','#362c3c',x,1.36,.25,.023,.029,.019);
@@ -68,7 +69,7 @@ export function makeLamp() {
   shape(g,'post','#8f836c',0,.29,0,.78,.17,.78);
   shape(g,'post','#4e3e48',0,1.63,0,.15,2.65,.15);
   for(const y of [.54,2.9,3.02]) shape(g,'post','#cb9c66',0,y,0,.21,.1,.21);
-  shape(g,'box','#593f48',.54,3.2,0,1.55,.18,.20);
+  shape(g,'box','#6b4a2f',.54,3.2,0,1.55,.18,.20);
   beam(g,[0,2.5,0],[.65,3.18,0],.075,'#77574a');
   beam(g,[1,3.12,0],[1,2.87,0],.032,'#c09d72');
   const body=paper(g,1,2.37,0,.57,'#b87758');
@@ -77,20 +78,21 @@ export function makeLamp() {
 }
 export function makeShade() {
   const g=new T.Group();
-  shape(g,'orb','#32273f',0,.14,0,.65,.77,.61);
+  shape(g,'rim','#7a3cff',0,.14,0,.67,.78,.62,true);
+  shape(g,'orb','#120a1a',0,.14,0,.65,.77,.61);
   for(let i=0;i<5;i++) {
     const a=i*1.2566;
-    const tail=shape(g,'cone','#483558',Math.sin(a)*.32,-.41,Math.cos(a)*.32,.19,.56,.19);
+    const tail=shape(g,'cone','#3a3450',Math.sin(a)*.32,-.41,Math.cos(a)*.32,.19,.56,.19);
     tail.rotation.x=Math.PI+.16*Math.cos(a);tail.rotation.z=.17*Math.sin(a);
   }
-  for(const x of [-.2,.2]) shape(g,'orb','#dda1ef',x,.23,.52,.075,.10,.048,true);
+  for(const x of [-.2,.2]) shape(g,'orb','#7a3cff',x,.23,.52,.075,.10,.048,true);
   return g;
 }
 function island(parent,r,depth,rng,hero=false) {
   const n=hero?64:18, rings=[], positions=[], colors=[];
   const levels=hero?[[0,.005],[.38,.005],[.72,.005],[1,0],[.99,-.17],[.82,-.61],[.40,-1],[.12,-1.18]]:
     [[0,0],[.67,0],[1,-.1],[.91,-.42],[.54,-.93],[.17,-1.12]];
-  const ground=['#577c74','#557a72','#5b7e74','#607f73','#57786f'];
+  const ground=['#2f5d50','#305f51','#315e52'];
   const cliff=['#52516a','#51475d','#61596d','#65586c','#777082','#66546a','#4a495e'];
   for(let k=0;k<levels.length;k++) {
     const [rad,y]=levels[k], ring=[];
@@ -138,17 +140,38 @@ function batchStatic(parent) {
   }return output;
 }
 
-export function environment(scene) {
+export function environment(scene,night=1) {
   const rng=seeded(3613), base=new T.Group();
   const forest=[['#244d51','#346263','#467775'],['#345b5b','#48746c','#63867a'],['#32434f','#3d565c','#4f6d6c']];
-  island(base,ISLAND_RADIUS+.55,11,rng,true);
+  for(const [cx,r] of islands[night]){
+    const g=new T.Group();g.position.x=cx;base.add(g);island(g,r,11,rng,true);
+  }
+  if(night===2){
+    for(let x=26;x<=44;x+=.5)shape(base,'box','#6b4a2f',x,.03,0,.48,.12,4);
+  }
+  if(night===3){
+    const terrace=new T.Shape();terrace.absarc(0,0,24,0,Math.PI,false);
+    terrace.lineTo(-12,0);terrace.absarc(0,0,12,Math.PI,0,true);terrace.closePath();
+    const mesh=new T.Mesh(new T.ExtrudeGeometry(terrace,{depth:3,bevelEnabled:false,curveSegments:32}),material('#2f5d50'));
+    mesh.rotation.x=Math.PI/2;mesh.position.y=3;base.add(mesh);
+    shape(base,'post','#2f5d50',0,3,0,8,6,8);shape(base,'post','#6b4a2f',0,10,0,2,8,2);
+    shape(base,'cone','#c9b48a',0,14.5,0,2.5,1,2.5);
+    for(const sign of [-1,1]){
+      const g=new T.Group();base.add(g);g.position.set(sign*27*Math.sqrt(3)/2,1.48,13.5);
+      g.rotation.y=Math.atan2(sign*Math.sqrt(3)/2,.5);const ramp=shape(g,'box','#c9b48a',0,0,0,3,.12,Math.sqrt(45));ramp.rotation.x=Math.atan(.5);
+    }
+  }
+  for(const [x,y,z] of pads[night]){
+    shape(base,'post','#c8102e',x,y+.08,z,1,.16,1);
+    shape(base,'rim','#f2c14e',x,y+.19,z,.78,.78,.78,true).rotation.x=Math.PI/2;
+  }
   // The paths and stones sit slightly above the level collision plane.
-  for(let j=0;j<5;j++) {
-    const a=j*2*Math.PI/5;
+  for(let j=0;j<lamps[night].length;j++) {
+    const lp=lamps[night][j],cx=night===2&&lp[0]>40?70:0;const a=Math.atan2(lp[0]-cx,-lp[2]);
     for(let i=0;i<13;i++) {
-      const r=2+i*1.14,offset=Math.sin(i*.52+j)*.62;
-      const x=Math.sin(a)*r+Math.cos(a)*offset,z=-Math.cos(a)*r+Math.sin(a)*offset;
-      const stone=shape(base,'post',i%3?'#9d9b81':'#b3a78a',x,.10,z,.55+rng()*.3,.04,.31+rng()*.2);stone.rotation.y=a+rng();
+      const r=2+i*(Math.hypot(lp[0]-cx,lp[2])-2)/13,offset=Math.sin(i*.52+j)*.62;
+      const x=cx+Math.sin(a)*r+Math.cos(a)*offset,z=-Math.cos(a)*r+Math.sin(a)*offset;
+      const stone=shape(base,'post',i%3?'#c9b48a':'#c5b28b',x,.10,z,.55+rng()*.3,.04,.31+rng()*.2);stone.rotation.y=a+rng();
     }
   }
   for(let i=0;i<65;i++) {
@@ -190,7 +213,7 @@ export function environment(scene) {
     const size=3+rng()*6;island(g,size,size*1.35,rng);
     for(let k=0;k<4;k++) pine(g,(rng()-.5)*size,0,(rng()-.5)*size,(rng()*.6+.42)*size,forest[(i+k)%3]);
   }
-  scene.add(batchStatic(base));
+  const mesh=batchStatic(base);scene.add(mesh);return mesh;
 }
 export function sky(scene) {
   const uniforms={day:{value:0}};
@@ -201,9 +224,9 @@ export function sky(scene) {
     float noise(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
     void main(){
       vec3 d=normalize(dir); float h=d.y;
-      vec3 col=mix(vec3(.45,.40,.55),vec3(.095,.14,.235),smoothstep(-.13,.31,h));
-      col=mix(col,vec3(.035,.063,.125),smoothstep(.25,.88,h));
-      col=mix(col,vec3(.72,.59,.66),smoothstep(-.12,-.78,h));
+      vec3 col=mix(vec3(.106,.137,.314),vec3(.055,.078,.188),smoothstep(-.13,.31,h));
+      col=mix(col,vec3(.055,.078,.188),smoothstep(.25,.88,h));
+      col=mix(col,vec3(.071,.22,.29),smoothstep(-.12,-.78,h));
       float md=distance(d,normalize(vec3(-.40,.028,-.916)));
       col+=vec3(.30,.20,.12)*exp(-md*11.)+vec3(.92,.78,.52)*(1.-smoothstep(.047,.049,md));
       vec2 uv=vec2(atan(d.z,d.x),asin(d.y))*160.; vec2 cell=floor(uv);

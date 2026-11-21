@@ -28,32 +28,18 @@ npm ci && npm start
 
 Màn hình cảm ứng có các nút di chuyển và hành động. Nút ♪ bật tiếng chuông tổng hợp.
 
-## Luật và điểm Đêm 1
+## Ba đêm · Contract v1.1
 
-Mây có 3 ngọn lửa, mang tối đa 10 đom đóm. Mỗi đèn cần 4 đom đóm, có thể nạp nhiều lần. Một lần tỏa sáng tốn 2 đom đóm. Bị Bóng Mực chạm sẽ mất 1 ngọn lửa và rơi một nửa số đom đóm mang theo, làm tròn xuống. Mây được miễn thương 2 giây sau mỗi lần chạm. Đường biên giữ Mây trên đảo (`fall_enabled: false`).
-
-Nhặt một đom đóm được 10 điểm, thắp một đèn được 100 điểm và làm choáng một Bóng Mực được 15 điểm. Khi thắp sáng cả năm đèn, Mây được thưởng 2 điểm cho mỗi giây nguyên còn lại và 50 điểm cho mỗi ngọn lửa còn lại. Hết 240 giây hoặc mất ngọn lửa cuối thì thua.
-
-## Kiểm chứng
+Đếm giờ 300 / 330 / 360 giây. Mỗi đèn cần 10 đom đóm. Mây mang tối đa 10, có 3 Ngọn Lửa. Nhấn Shift để lướt, P hoặc Esc để tạm dừng. Nhặt Bùa Gió để chạy nhanh và lướt liên tiếp. Đêm 2 có cầu, bục nhảy và Gió Lạc. Đêm 3 có các tầng, tháp và gió mạnh. Thắng khi tất cả đèn sáng trước hoặc đúng bình minh. Mỗi đom đóm nạp +10, thắp đèn +100, mỗi Bóng Mực trúng xung +5. Khi thắng cộng 2 điểm mỗi giây nguyên còn lại và 50 mỗi Ngọn Lửa.
 
 ```sh
 npm test
 npm run proof
-node tools/headless.js --seed 17 --night 1 --ticks 14400 --inputs docs/proof/full-night/inputs.json --snapshot-every 300 --out full-night.jsonl
+node tools/headless.js --seed 17 --night 2 --ticks 21600 --inputs docs/proof/phase-2/inputs.json --scenario docs/proof/phase-2/scenario.json --out trace.jsonl
 ```
 
-Lệnh cuối chơi từ trạng thái mặc định bằng chuỗi input đã lưu. Đầu ra kết thúc ở tick 1355 với `state: won` và 1344 điểm. Bỏ `--inputs` để thử đứng yên. Dùng `--scenario <file.json>` để đặt tình huống ban đầu. CLI chạy ở 60 tick/giây mô phỏng, không cần màn hình hoặc GPU. Mỗi dòng output là một đối tượng JSON. Snapshot đầu ở tick 0, dòng cuối là `end`. Inputs hoặc scenario sai định dạng trả mã 2.
-
-| Muốn đối chiếu | Tệp |
-|---|---|
-| Lệnh chính thức và các hằng số đang dùng | [Test Contract v1.0](game.contract.json) |
-| Tiêu chí, giả định, kết quả và giới hạn | [Ghi chép Phase 1](docs/phase-1.md) |
-| Một lần nhặt, tỏa sáng, nạp và thắng | [Scenario](docs/proof/seed17/scenario.json), [inputs](docs/proof/seed17/inputs.json), [JSONL thực](docs/proof/seed17/actual.jsonl) |
-| Thắng từ đầu màn ở seed 17 | [Inputs cả đêm](docs/proof/full-night/inputs.json), [kiểm tra thắng và thua](tests/full-night.test.js) |
-| Quy trình AI và kiểm tra trên Linux/macOS | [AGENTS.md](AGENTS.md), [cấu hình CI](.github/workflows/verify.yml) |
+[Tiêu chí Phase 2](docs/phase-2.md) · [Các số liệu game](game.contract.json) · [Bằng chứng v1.1](docs/proof/phase-2) · [Ghi chép Phase 1](docs/phase-1.md)
 
 ## Sáng tạo của tôi
 
-Năm đường đá tỏa từ tâm đảo giúp người chơi tìm đường đến từng đèn. Âm chuông cao dần theo số đom đóm trong túi. Cả hai nằm trong phần hiển thị và âm thanh. Có thể đối chiếu cảnh chơi thật với một lần chạy logic xác định. [Video](docs/demo/demo.mp4) · [JSONL](docs/proof/seed17/actual.jsonl)
-
-[Nguồn tài sản và công cụ](CREDITS.md) · [Giấy phép mã nguồn](LICENSE)
+Đường đá chỉ hướng và chuông khi nhặt đom đóm nằm ở lớp hiển thị. Kịch bản headless xác định kiểm tra riêng bộ luật. [Nguồn](CREDITS.md) · [Giấy phép](LICENSE)

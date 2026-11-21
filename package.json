@@ -13,6 +13,7 @@
     "proof": "node tools/proof.js"
   },
   "dependencies": {
+    "playwright-core": "1.65.1",
     "three": "0.170.0"
   }
 }

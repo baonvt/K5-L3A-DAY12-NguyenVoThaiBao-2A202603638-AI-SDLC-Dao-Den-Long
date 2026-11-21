@@ -1,4 +1,4 @@
-# Phase 2 · Contrat v1.1
+# Phase 2 · Contract v1.1
 
 | Mục của Ticket-02 | Tiêu chí chấp nhận và cách kiểm |
 |---|---|
@@ -12,4 +12,8 @@
 | Gió trời | Kiểm cảnh báo trước 2 s, đẩy tại giây 30, hết sau 5 s; cùng seed cùng hướng. |
 | CLI | Chạy cả 3 đêm, JSONL đúng schema, hai lần giống byte, kiểm snapshot đầu và biên pause/resume. |
 
-Bản đồ, lịch sinh và thứ tự xử lý dùng chung giữa CLI và WebGL. Những giá trị không thấy trong bản dán được theo dõi khi đối chiếu bảng chuẩn.
+Bản đồ, lịch sinh và thứ tự xử lý dùng chung giữa CLI và WebGL. Hai bảng trong ảnh bổ sung quy định các giá trị nhặt, nạp, tỏa sáng, rơi và bảng màu. Test Phase 1 cho điểm ngay khi nhặt, đẩy tức thời và thắng bằng tuyến đường cũ đã được đổi theo số liệu và bản đồ v1.1. Bằng chứng Phase 1 vẫn ở tag phase-1.
+
+## Kết quả
+
+20 test đạt trên máy phát triển. Bài kiểm trên trình duyệt mở lại cài đặt đã lưu và đo 60 khoảng khung hình ở 1280×720. Xem [play.json](proof/phase-2/play.json) và [trace JSONL](proof/phase-2/actual.jsonl).
